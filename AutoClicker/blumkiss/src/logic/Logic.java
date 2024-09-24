@@ -10,6 +10,7 @@ public class Logic {
             AWTException, InterruptedException
     {
         String command = "notepad.exe";
+        String runTelegram = "C:\\Users\\sanya\\AppData\\Roaming\\Telegram Desktop\\Telegram.exe";
         Runtime run = Runtime.getRuntime();
         run.exec(command);
         try {
@@ -21,12 +22,8 @@ public class Logic {
             e.printStackTrace();
         }
 
-        // Create an instance of Robot class
         Robot robot = new Robot();
 
-        // Press keys using robot. A gap of
-        // of 500 milli seconds is added after
-        // every key press
         robot.keyPress(KeyEvent.VK_B);
         Thread.sleep(500);
         robot.keyPress(KeyEvent.VK_R);
@@ -60,6 +57,55 @@ public class Logic {
         robot.keyPress(KeyEvent.VK_E);
         Thread.sleep(500);
         robot.keyPress(KeyEvent.VK_R);
+        Thread.sleep(500);
+        robot.keyPress(KeyEvent.VK_CONTROL);
+        robot.keyPress(KeyEvent.VK_W);
+        robot.keyRelease(KeyEvent.VK_W);
+        robot.keyRelease(KeyEvent.VK_CONTROL);
+        Thread.sleep(200);
+        robot.keyPress(KeyEvent.VK_RIGHT);
+        robot.keyRelease(KeyEvent.VK_RIGHT);
+        Thread.sleep(200);
 
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
+
+        Thread.sleep(1000);
+
+
+
+        // check if telegram is running now
+
+        try {
+            // Виконання команди tasklist для отримання списку запущених процесів
+            Process process = Runtime.getRuntime().exec("tasklist");
+
+            // Читання виведення команди
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            boolean telegramRunning = false;
+
+            // Перевірка на наявність процесу Telegram.exe
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("Telegram.exe") || line.contains("telegram.exe")) {
+                    telegramRunning = true;
+                    break;
+                }
+            }
+
+            if (telegramRunning) {
+                System.out.println("Telegram is running.");
+                String killProc = "taskkill /IM Telegram.exe /F";
+                run.exec(killProc);
+                Thread.sleep(1000);
+                run.exec(runTelegram);
+            } else {
+                System.out.println("Telegram is not running.");
+                run.exec(runTelegram);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     }
