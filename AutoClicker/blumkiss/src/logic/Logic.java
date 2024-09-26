@@ -306,3 +306,6 @@ public class Logic {
 
     }
 }
+
+
+//need to calculate stars` speed
