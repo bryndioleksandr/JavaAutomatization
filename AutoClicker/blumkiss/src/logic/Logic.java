@@ -16,7 +16,13 @@ import net.sourceforge.lept4j.*;
 import net.sourceforge.tess4j.TesseractException;
 
 
+import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.videoio.VideoCapture;
+
 public class Logic {
+    static { System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
     static String channel = "blumcrypto";
     static String bot = "BlumCryptoBot";
     static String dataPath = "C:\\Program Files\\Tesseract-OCR\\tessdata";
@@ -241,5 +247,67 @@ public class Logic {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+
+
+        //now making logic to detect needed items on the game-screen
+
+        long gameDuration = 30 * 1000;
+        long startTime = System.currentTimeMillis();
+        File masksDirectory = new File("masks");
+        if (!masksDirectory.exists()) {
+            masksDirectory.mkdir(); // Створити папку, якщо не існує
+        }
+        while (System.currentTimeMillis() - startTime < gameDuration) {
+            BufferedImage screenshotGameplay = new Robot().createScreenCapture(
+                    new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize())
+            );
+
+            File outputfile = new File("gameplay.png");
+            ImageIO.write(screenshotGameplay, "png", outputfile);
+
+            Mat image = Imgcodecs.imread("gameplay.png");
+
+            Mat hsvImage = new Mat();
+            Imgproc.cvtColor(image, hsvImage, Imgproc.COLOR_BGR2HSV);
+            Scalar lowerGreen = new Scalar(35, 100, 100); // Adjust to your green
+            Scalar upperGreen = new Scalar(85, 255, 255);
+
+            // Detect green objects (snowflakes)
+            Mat mask = new Mat();
+            Core.inRange(hsvImage, lowerGreen, upperGreen, mask);
+
+            // Find contours of the detected green objects
+            List<MatOfPoint> contours = new java.util.ArrayList<>();
+            Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            int snowflakeCount = 0;
+            for (MatOfPoint contour : contours) {
+                snowflakeCount++;
+                Rect boundingRect = Imgproc.boundingRect(contour);
+
+                int centerX = boundingRect.x + boundingRect.width / 2;
+                int centerY = boundingRect.y + boundingRect.height / 2;
+
+                robot.mouseMove(centerX, centerY);
+                Thread.sleep(200);
+
+                robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+
+                Thread.sleep(500);
+                Mat snowflakeMask = new Mat(mask.size(), CvType.CV_8UC1, new Scalar(0)); // Створити чорну маску
+                Imgproc.drawContours(snowflakeMask, List.of(contour), -1, new Scalar(255), Imgproc.FILLED); // Заповнити контур білим
+
+                // Зберегти маску сніжинки
+                File snowflakeMaskFile = new File(masksDirectory, "snowflake_" + snowflakeCount + ".png");
+                Imgcodecs.imwrite(snowflakeMaskFile.getAbsolutePath(), snowflakeMask);
+            }
+
+            Thread.sleep(1000);
+        }
+
+        // Game over after 30 seconds
+        System.out.println("Game over: 30 seconds have passed.");
+        }
+
 }
