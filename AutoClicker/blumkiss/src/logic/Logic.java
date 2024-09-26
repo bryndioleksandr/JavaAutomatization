@@ -22,10 +22,15 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
 public class Logic {
-    static { System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
+
     static String channel = "blumcrypto";
     static String bot = "BlumCryptoBot";
     static String dataPath = "C:\\Program Files\\Tesseract-OCR\\tessdata";
+    static boolean findPlay = false;
+
 
     public static void main(String[] args) throws IOException,
             AWTException, InterruptedException {
@@ -117,18 +122,14 @@ public class Logic {
             Thread.sleep(1000);
             String runChannel = "cmd /c start tg://resolve?domain=" + channel;
             String runBot = "cmd /c start tg://resolve?domain=" + bot + "&startapp";
-            run.exec(runChannel);
-            Thread.sleep(2000);
             run.exec(runBot);
-            Thread.sleep(10000);
+            Thread.sleep(2500);
 
             BufferedImage screenshot = new Robot().createScreenCapture(
                     new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize())
             );
-            Thread.sleep(2000);
             ImageIO.write(screenshot, "png", new File("findLaunch.png"));
-            Thread.sleep(1000);
-           // run.exec("cmd /c start \"\" \"C:\\Test Clicker\\AutoClicker\\blumkiss\\findLaunch.png\"");
+            // run.exec("cmd /c start \"\" \"C:\\Test Clicker\\AutoClicker\\blumkiss\\findLaunch.png\"");
             Thread.sleep(1000);
             Tesseract tesseract = new Tesseract();
             tesseract.setDatapath(dataPath);
@@ -140,38 +141,35 @@ public class Logic {
             } catch (TesseractException e) {
                 e.printStackTrace();
             }
-                List<Word> words = tesseract.getWords(screenshot, ITessAPI.TessPageIteratorLevel.RIL_WORD);
+            List<Word> words = tesseract.getWords(screenshot, ITessAPI.TessPageIteratorLevel.RIL_WORD);
 
-                for (Word word : words) {
-                    if (word.getText().equalsIgnoreCase("Launch")) {
-                        java.awt.Rectangle boundingBox = word.getBoundingBox();
-                        int x = boundingBox.x;
-                        int y = boundingBox.y;
-                        int width = boundingBox.width;
-                        int height = boundingBox.height;
+            for (Word word : words) {
+                if (word.getText().equalsIgnoreCase("Launch")) {
+                    java.awt.Rectangle boundingBox = word.getBoundingBox();
+                    int x = boundingBox.x;
+                    int y = boundingBox.y;
+                    int width = boundingBox.width;
+                    int height = boundingBox.height;
 
-                        System.out.println("Found 'Launch bot' at: " + x + ", " + y);
-                        System.out.println("Bounding box size: " + width + "x" + height);
-                        robot.mouseMove(x+5, y+8);
-                        Thread.sleep(2000);
-                        robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-                        robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                        break;
-                    }
-                    else{
-                        System.out.println("Cant find needed phrase. Found: " + word.getText());
-                    }
+                    System.out.println("Found 'Launch bot' at: " + x + ", " + y);
+                    System.out.println("Bounding box size: " + width + "x" + height);
+                    robot.mouseMove(x + 5, y + 8);
+                    Thread.sleep(2000);
+                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                    robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                    break;
+                } else {
+                    System.out.println("Cant find needed phrase. Found: " + word.getText());
                 }
+            }
 
 
-                //second screenshot
-                Thread.sleep(10000);
+            //second screenshot
+            Thread.sleep(2000);
             BufferedImage screenshotBot = new Robot().createScreenCapture(
                     new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize())
             );
-            Thread.sleep(2000);
             ImageIO.write(screenshotBot, "png", new File("findUsername.png"));
-            Thread.sleep(1000);
             // run.exec("cmd /c start \"\" \"C:\\Test Clicker\\AutoClicker\\blumkiss\\findLaunch.png\"");
             Thread.sleep(1000);
             File imageFileBot = new File("findUsername.png");
@@ -193,12 +191,13 @@ public class Logic {
 
                     System.out.println("Found 'Launch bot' at: " + x + ", " + y);
                     System.out.println("Bounding box size: " + width + "x" + height);
-                    robot.mouseMove(x+5, y+8);
-                    Thread.sleep(2000);
+                    robot.mouseMove(x + 5, y + 8);
+                    Thread.sleep(500);
                     robot.mouseWheel(50);
+                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     break;
-                }
-                else{
+                } else {
                     System.out.println("Cant find user phrase. Found: " + worda.getText());
                 }
             }
@@ -230,17 +229,17 @@ public class Logic {
                     int y = boundingBoxPlay.y;
                     int width = boundingBoxPlay.width;
                     int height = boundingBoxPlay.height;
-
+                    findPlay = true;
                     System.out.println("Found 'Launch bot' at: " + x + ", " + y);
                     System.out.println("Bounding box size: " + width + "x" + height);
-                    robot.mouseMove(x+236, y+10);
+                    robot.mouseMove(x + 236, y + 10);
                     Thread.sleep(2000);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
                     break;
-                }
-                else{
+                } else {
                     System.out.println("Cant find play phrase. Found: " + wordw.getText());
+                    findPlay = false;
                 }
             }
 
@@ -248,66 +247,62 @@ public class Logic {
             e.printStackTrace();
         }
 
+        if (findPlay) {
+            //now making logic to detect needed items on the game-screen
 
-        //now making logic to detect needed items on the game-screen
+            int x = 717; // Верхня ліва межа по X
+            int y = 82;  // Верхня ліва межа по Y
+            int width = 488; // Ширина вікна
+            int height = 872; // Висота вікна
+            long gameDuration = 30 * 1000;
+            long startTime = System.currentTimeMillis();
 
-        long gameDuration = 30 * 1000;
-        long startTime = System.currentTimeMillis();
-        File masksDirectory = new File("masks");
-        if (!masksDirectory.exists()) {
-            masksDirectory.mkdir(); // Створити папку, якщо не існує
-        }
-        while (System.currentTimeMillis() - startTime < gameDuration) {
-            BufferedImage screenshotGameplay = new Robot().createScreenCapture(
-                    new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize())
-            );
+            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            Thread.sleep(150);
+            while (System.currentTimeMillis() - startTime < gameDuration) {
+                BufferedImage screenshotGameplay = new Robot().createScreenCapture(
+                        new java.awt.Rectangle((int) Math.round(x * 0.8), (int) Math.round(y * 0.8), (int) Math.round(width * 0.8), (int) Math.round(height * 0.8))
+                );
 
-            File outputfile = new File("gameplay.png");
-            ImageIO.write(screenshotGameplay, "png", outputfile);
+                File outputfile = new File("gameplay.png");
+                ImageIO.write(screenshotGameplay, "png", outputfile);
 
-            Mat image = Imgcodecs.imread("gameplay.png");
+                Mat image = Imgcodecs.imread("gameplay.png");
 
-            Mat hsvImage = new Mat();
-            Imgproc.cvtColor(image, hsvImage, Imgproc.COLOR_BGR2HSV);
-            Scalar lowerGreen = new Scalar(35, 100, 100); // Adjust to your green
-            Scalar upperGreen = new Scalar(85, 255, 255);
+                Mat hsvImage = new Mat();
+                Imgproc.cvtColor(image, hsvImage, Imgproc.COLOR_BGR2HSV);
+                Scalar lowerGreen = new Scalar(55, 200, 200); // Adjust to your green
+                Scalar upperGreen = new Scalar(68, 255, 255);
 
-            // Detect green objects (snowflakes)
-            Mat mask = new Mat();
-            Core.inRange(hsvImage, lowerGreen, upperGreen, mask);
+                // Detect green objects (snowflakes)
+                Mat mask = new Mat();
+                Core.inRange(hsvImage, lowerGreen, upperGreen, mask);
 
-            // Find contours of the detected green objects
-            List<MatOfPoint> contours = new java.util.ArrayList<>();
-            Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+                // Find contours of the detected green objects
+                List<MatOfPoint> contours = new java.util.ArrayList<>();
+                Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            int snowflakeCount = 0;
-            for (MatOfPoint contour : contours) {
-                snowflakeCount++;
-                Rect boundingRect = Imgproc.boundingRect(contour);
+                for (MatOfPoint contour : contours) {
+                    Rect boundingRect = Imgproc.boundingRect(contour);
 
-                int centerX = boundingRect.x + boundingRect.width / 2;
-                int centerY = boundingRect.y + boundingRect.height / 2;
+                    int centerX = boundingRect.x + boundingRect.width / 2;
+                    int centerY = boundingRect.y + boundingRect.height / 2;
 
-                robot.mouseMove(centerX, centerY);
-                Thread.sleep(200);
+                    System.out.println("Snowflake found at x, y: " + centerX + ", " + centerY);
 
-                robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-                robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                    robot.mouseMove(centerX + (int) Math.round(x * 0.8), centerY + (int) Math.round(y * 0.8));
+                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                    robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                }
 
-                Thread.sleep(500);
-                Mat snowflakeMask = new Mat(mask.size(), CvType.CV_8UC1, new Scalar(0)); // Створити чорну маску
-                Imgproc.drawContours(snowflakeMask, List.of(contour), -1, new Scalar(255), Imgproc.FILLED); // Заповнити контур білим
-
-                // Зберегти маску сніжинки
-                File snowflakeMaskFile = new File(masksDirectory, "snowflake_" + snowflakeCount + ".png");
-                Imgcodecs.imwrite(snowflakeMaskFile.getAbsolutePath(), snowflakeMask);
+                Thread.sleep(100);
             }
 
-            Thread.sleep(1000);
+            System.out.println("Game over: 30 seconds have passed.");
+        } else {
+            System.out.print("Couldnt find play btn. Fix it");
         }
 
-        // Game over after 30 seconds
-        System.out.println("Game over: 30 seconds have passed.");
-        }
-
+    }
 }
