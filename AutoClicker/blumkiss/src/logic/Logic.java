@@ -280,12 +280,13 @@ public class Logic {
 
                 Mat hsvImage = new Mat();
                 Imgproc.cvtColor(image, hsvImage, Imgproc.COLOR_BGR2HSV);
-                Scalar lowerGreen = new Scalar(55, 220, 200); // Adjust to your green
-                Scalar upperGreen = new Scalar(70, 255, 255);
+                Scalar lowerGreen = new Scalar(35, 100, 100, 0); // Adjust to your green
+                Scalar upperGreen = new Scalar(70, 255, 255, 0);
 
                 // Detect green objects (snowflakes)
                 Mat mask = new Mat();
                 Core.inRange(hsvImage, lowerGreen, upperGreen, mask);
+
 
                 // Find contours of the detected green objects
                 List<MatOfPoint> contours = new java.util.ArrayList<>();
@@ -308,7 +309,7 @@ public class Logic {
                     Imgproc.drawContours(singleStarMask, contours, starIndex, new Scalar(255), -1);
 
                     // Збереження маски для кожної сніжинки
-                    String maskFilename = "masks\\star_mask_" + starIndex + ".png";
+                    String maskFilename = "masks\\star_mask_" + gameplayIndex + ".png";
                     Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                     System.out.println("Маска сніжинки збережена як: " + maskFilename);
