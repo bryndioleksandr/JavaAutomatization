@@ -264,7 +264,7 @@ public class Logic {
 
             robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            Thread.sleep(150);
+            Thread.sleep(2000);
             while (System.currentTimeMillis() - startTime < gameDuration) {
                 BufferedImage screenshotGameplay = new Robot().createScreenCapture(
                         new java.awt.Rectangle((int) Math.round(x * 0.8), (int) Math.round(y * 0.8), (int) Math.round(width * 0.8), (int) Math.round(height * 0.8))
@@ -317,7 +317,7 @@ public class Logic {
                     starIndex++;
                 }
 
-                Thread.sleep(5);
+                Thread.sleep(100);
             }
 
             System.out.println("Game over: 30 seconds have passed.");
