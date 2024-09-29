@@ -227,7 +227,7 @@ public class Logic {
             List<Word> wordsPlay = tesseract.getWords(screenshotPlay, ITessAPI.TessPageIteratorLevel.RIL_WORD);
 
             for (Word wordw : wordsPlay) {
-                if (wordw.getText().equalsIgnoreCase("Wallet")) {
+                if (wordw.getText().equalsIgnoreCase("@BlumCryptoBot")) {
                     java.awt.Rectangle boundingBoxPlay = wordw.getBoundingBox();
                     int x = boundingBoxPlay.x;
                     int y = boundingBoxPlay.y;
@@ -236,7 +236,7 @@ public class Logic {
                     findPlay = true;
                     System.out.println("Found 'Wallet' at: " + x + ", " + y);
                     System.out.println("Bounding box size: " + width + "x" + height);
-                    robot.mouseMove(xPlay+x - 10, yPlay+y - 180);
+                    robot.mouseMove(xPlay+x + 170, yPlay+y - 230);
                     Thread.sleep(2000);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
@@ -280,7 +280,7 @@ public class Logic {
 
                 Mat hsvImage = new Mat();
                 Imgproc.cvtColor(image, hsvImage, Imgproc.COLOR_BGR2HSV);
-                Scalar lowerGreen = new Scalar(35, 100, 100, 0); // Adjust to your green
+                Scalar lowerGreen = new Scalar(35, 150, 160, 0); // Adjust to your green
                 Scalar upperGreen = new Scalar(70, 255, 255, 0);
 
                 // Detect green objects (snowflakes)
@@ -309,7 +309,7 @@ public class Logic {
                     Imgproc.drawContours(singleStarMask, contours, starIndex, new Scalar(255), -1);
 
                     // Збереження маски для кожної сніжинки
-                    String maskFilename = "masks\\star_mask_" + gameplayIndex + ".png";
+                    String maskFilename = "masks\\star_mask_" + gameplayIndex + "_" + starIndex + ".png";
                     Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                     System.out.println("Маска сніжинки збережена як: " + maskFilename);
@@ -317,7 +317,7 @@ public class Logic {
                     starIndex++;
                 }
 
-                Thread.sleep(100);
+                Thread.sleep(1500);
             }
 
             System.out.println("Game over: 30 seconds have passed.");
