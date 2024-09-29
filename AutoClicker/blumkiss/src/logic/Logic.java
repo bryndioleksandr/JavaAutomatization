@@ -123,7 +123,7 @@ public class Logic {
             String runChannel = "cmd /c start tg://resolve?domain=" + channel;
             String runBot = "cmd /c start tg://resolve?domain=" + bot + "&startapp";
             run.exec(runBot);
-            Thread.sleep(2500);
+            Thread.sleep(5000);
 
             BufferedImage screenshot = new Robot().createScreenCapture(
                     new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize())
@@ -165,7 +165,7 @@ public class Logic {
 
 
             //second screenshot
-            Thread.sleep(2000);
+            Thread.sleep(5000);
             BufferedImage screenshotBot = new Robot().createScreenCapture(
                     new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize())
             );
@@ -195,7 +195,7 @@ public class Logic {
                     Thread.sleep(500);
                     robot.mouseWheel(50);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                    robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
                     break;
                 } else {
                     System.out.println("Cant find user phrase. Found: " + worda.getText());
@@ -205,8 +205,12 @@ public class Logic {
 
             //third screenshot
             Thread.sleep(10000);
+            int xPlay = 717; // Верхня ліва межа по X
+            int yPlay = 82;  // Верхня ліва межа по Y
+            int widthPlay = 488; // Ширина вікна
+            int heightPlay = 872; // Висота вікна
             BufferedImage screenshotPlay = new Robot().createScreenCapture(
-                    new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize())
+                    new java.awt.Rectangle(xPlay, yPlay, widthPlay, heightPlay)
             );
             Thread.sleep(2000);
             ImageIO.write(screenshotPlay, "png", new File("findPlay.png"));
@@ -223,16 +227,16 @@ public class Logic {
             List<Word> wordsPlay = tesseract.getWords(screenshotPlay, ITessAPI.TessPageIteratorLevel.RIL_WORD);
 
             for (Word wordw : wordsPlay) {
-                if (wordw.getText().equalsIgnoreCase("game")) {
+                if (wordw.getText().equalsIgnoreCase("Wallet")) {
                     java.awt.Rectangle boundingBoxPlay = wordw.getBoundingBox();
                     int x = boundingBoxPlay.x;
                     int y = boundingBoxPlay.y;
                     int width = boundingBoxPlay.width;
                     int height = boundingBoxPlay.height;
                     findPlay = true;
-                    System.out.println("Found 'Launch bot' at: " + x + ", " + y);
+                    System.out.println("Found 'Wallet' at: " + x + ", " + y);
                     System.out.println("Bounding box size: " + width + "x" + height);
-                    robot.mouseMove(x + 236, y + 10);
+                    robot.mouseMove(xPlay+x - 10, yPlay+y - 180);
                     Thread.sleep(2000);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
@@ -254,6 +258,7 @@ public class Logic {
             int y = 82;  // Верхня ліва межа по Y
             int width = 488; // Ширина вікна
             int height = 872; // Висота вікна
+            int gameplayIndex = 0;
             long gameDuration = 30 * 1000;
             long startTime = System.currentTimeMillis();
 
@@ -264,16 +269,19 @@ public class Logic {
                 BufferedImage screenshotGameplay = new Robot().createScreenCapture(
                         new java.awt.Rectangle((int) Math.round(x * 0.8), (int) Math.round(y * 0.8), (int) Math.round(width * 0.8), (int) Math.round(height * 0.8))
                 );
-
-                File outputfile = new File("gameplay.png");
+                gameplayIndex++;
+                //File outputfile = new File("gameplay.png");
+                //ImageIO.write(screenshotGameplay, "png", outputfile);
+                String screenshotFilename = "gameplay\\gameplay_" + gameplayIndex + ".png";
+                File outputfile = new File(screenshotFilename);
                 ImageIO.write(screenshotGameplay, "png", outputfile);
 
-                Mat image = Imgcodecs.imread("gameplay.png");
+                Mat image = Imgcodecs.imread(screenshotFilename);
 
                 Mat hsvImage = new Mat();
                 Imgproc.cvtColor(image, hsvImage, Imgproc.COLOR_BGR2HSV);
-                Scalar lowerGreen = new Scalar(55, 200, 200); // Adjust to your green
-                Scalar upperGreen = new Scalar(68, 255, 255);
+                Scalar lowerGreen = new Scalar(55, 220, 200); // Adjust to your green
+                Scalar upperGreen = new Scalar(70, 255, 255);
 
                 // Detect green objects (snowflakes)
                 Mat mask = new Mat();
@@ -283,6 +291,7 @@ public class Logic {
                 List<MatOfPoint> contours = new java.util.ArrayList<>();
                 Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
+                int starIndex = 0;
                 for (MatOfPoint contour : contours) {
                     Rect boundingRect = Imgproc.boundingRect(contour);
 
@@ -291,12 +300,23 @@ public class Logic {
 
                     System.out.println("Snowflake found at x, y: " + centerX + ", " + centerY);
 
+//                    robot.mouseMove(x + centerX, y + centerY);
                     robot.mouseMove(centerX + (int) Math.round(x * 0.8), centerY + (int) Math.round(y * 0.8));
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                    Mat singleStarMask = new Mat(mask.size(), CvType.CV_8UC1, new Scalar(0));
+                    Imgproc.drawContours(singleStarMask, contours, starIndex, new Scalar(255), -1);
+
+                    // Збереження маски для кожної сніжинки
+                    String maskFilename = "masks\\star_mask_" + starIndex + ".png";
+                    Imgcodecs.imwrite(maskFilename, singleStarMask);
+
+                    System.out.println("Маска сніжинки збережена як: " + maskFilename);
+
+                    starIndex++;
                 }
 
-                Thread.sleep(100);
+                Thread.sleep(5);
             }
 
             System.out.println("Game over: 30 seconds have passed.");
