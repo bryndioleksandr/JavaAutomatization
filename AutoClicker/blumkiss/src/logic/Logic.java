@@ -35,12 +35,10 @@ public class Logic {
         logic.runTelegram();
     }
 
-    // Основна логіка запуску
     public void runTelegram() throws IOException, AWTException, InterruptedException {
         Robot robot = new Robot();
         Runtime run = Runtime.getRuntime();
 
-        // Перевірка, чи запущений Telegram
         if (isTelegramRunning()) {
             killProcess("Telegram.exe");
             Thread.sleep(1000);
@@ -53,7 +51,6 @@ public class Logic {
         // Запуск бота
         runTelegramBot(run, robot);
 
-        // Перевірка, чи знайдено кнопку "Play"
         if (findPlay) {
             // Запуск гри
             playGame(robot);
@@ -62,7 +59,6 @@ public class Logic {
         }
     }
 
-    // Функція для перевірки чи запущений процес Telegram
     public boolean isTelegramRunning() throws IOException {
         Process process = Runtime.getRuntime().exec("tasklist");
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -80,28 +76,23 @@ public class Logic {
         Runtime.getRuntime().exec("taskkill /IM " + processName + " /F");
     }
 
-    // Запуск бота Telegram
     public void runTelegramBot(Runtime run, Robot robot) throws IOException, InterruptedException, AWTException {
         String runChannel = "cmd /c start tg://resolve?domain=" + channel;
         String runBot = "cmd /c start tg://resolve?domain=" + bot + "&startapp";
         run.exec(runBot);
         Thread.sleep(5000);
 
-        // Скріншот екрана і OCR для пошуку кнопки "Launch"
         captureAndSearchText(robot, "findLaunch.png", "Launch", "Launch bot");
 
         Thread.sleep(5000);
 
-        // Скріншот і OCR для пошуку юзернейму
         captureAndSearchText(robot, "findUsername.png", "userbryndio", "Launch bot");
         Thread.sleep(5000);
 
 
-        // Скріншот і OCR для пошуку бота
         captureAndSearchText(robot, "findPlay.png", "@BlumCryptoBot", "Wallet");
     }
 
-    // Функція для створення скріншота і пошуку тексту на зображенні за допомогою Tesseract
     public void captureAndSearchText(Robot robot, String fileName, String searchText, String foundText) throws AWTException, IOException, InterruptedException {
         BufferedImage screenshot = robot.createScreenCapture(new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize()));
         ImageIO.write(screenshot, "png", new File(fileName));
@@ -144,7 +135,6 @@ public class Logic {
         }
     }
 
-    // Логіка гри
     public void playGame(Robot robot) throws IOException, InterruptedException, AWTException {
         int x = 717; // Верхня ліва межа по X
         int y = 82;  // Верхня ліва межа по Y
@@ -173,7 +163,6 @@ public class Logic {
         System.out.println("Game over: 30 seconds have passed.");
     }
 
-    // Виявлення об'єктів (наприклад, сніжинок) на екрані
     public void detectObjects(Robot robot, String screenshotFilename, int x, int y) throws IOException, InterruptedException {
         Mat image = Imgcodecs.imread(screenshotFilename);
 
