@@ -86,15 +86,53 @@ public class Logic {
 
         Thread.sleep(5000);
 
-        captureAndSearchText(robot, "findUsername.png", "userbryndio", "Launch bot");
+        captureAndSearchTextScroll(robot, "findUsername.png", "userbryndio", "Launch bot");
         Thread.sleep(5000);
 
 
         captureAndSearchText(robot, "findPlay.png", "@BlumCryptoBot", "Wallet");
     }
 
-    public void captureAndSearchText(Robot robot, String fileName, String searchText, String foundText) throws AWTException, IOException, InterruptedException {
+    public void scrollToPlay(Robot robot) {
+            robot.mouseWheel(200);
+    }
+
+    public void captureAndSearchTextScroll(Robot robot, String fileName, String searchText, String foundText) throws AWTException, IOException, InterruptedException {
         BufferedImage screenshot = robot.createScreenCapture(new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize()));
+        ImageIO.write(screenshot, "png", new File(fileName));
+        Thread.sleep(1000);
+
+        Tesseract tesseract = new Tesseract();
+        tesseract.setDatapath(dataPath);
+        tesseract.setLanguage("eng");
+
+        File imageFile = new File(fileName);
+        try {
+            String resultText = tesseract.doOCR(imageFile);
+            System.out.println(resultText);
+            findAndClickText(robot, tesseract, screenshot, searchText, foundText);
+            scrollToPlay(robot);
+        } catch (TesseractException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void captureAndSearchText(Robot robot, String fileName, String searchText, String foundText) throws AWTException, IOException, InterruptedException {
+        BufferedImage screenshot;
+        if(searchText.equals("@BlumCryptoBot")){
+            int xPlay = 717; // Верхня ліва межа по X
+            int yPlay = 82;  // Верхня ліва межа по Y
+            int widthPlay = 488; // Ширина вікна
+            int heightPlay = 872; // Висота вікна
+            screenshot = new Robot().createScreenCapture(
+                    new java.awt.Rectangle(xPlay, yPlay, widthPlay, heightPlay)
+            );
+        }
+        else{
+            screenshot = robot.createScreenCapture(new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize()));
+        }
+
         ImageIO.write(screenshot, "png", new File(fileName));
         Thread.sleep(1000);
 
@@ -111,6 +149,7 @@ public class Logic {
             e.printStackTrace();
         }
     }
+
 
     public void findAndClickText(Robot robot, Tesseract tesseract, BufferedImage screenshot, String searchText, String foundText) throws AWTException, InterruptedException {
         List<Word> words = tesseract.getWords(screenshot, ITessAPI.TessPageIteratorLevel.RIL_WORD);
