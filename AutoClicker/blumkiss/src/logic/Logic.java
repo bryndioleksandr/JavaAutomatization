@@ -89,7 +89,7 @@ public class Logic {
         Thread.sleep(10000);
 
 
-        captureAndSearchText(robot, "findPlay.png", "@BlumCryptoBot", "Wallet");
+        captureAndSearchText(robot, "findPlay.png", "Wallet", "Wallet");
     }
 
     public void scrollToPlay(Robot robot) {
@@ -119,7 +119,7 @@ public class Logic {
 
     public void captureAndSearchText(Robot robot, String fileName, String searchText, String foundText) throws AWTException, IOException, InterruptedException {
         BufferedImage screenshot;
-        if(searchText.equals("@BlumCryptoBot")){
+        if(searchText.equals("Wallet")){
             int xPlay = 717; // Верхня ліва межа по X
             int yPlay = 82;  // Верхня ліва межа по Y
             int widthPlay = 488; // Ширина вікна
@@ -164,8 +164,8 @@ public class Logic {
                 int y = boundingBox.y;
                 int width = boundingBox.width;
                 int height = boundingBox.height;
-                if(searchText.equals("@BlumCryptoBot")){
-                    robot.mouseMove(xPlay+x, yPlay+y - 230);
+                if(searchText.matches("Wallet")){
+                    robot.mouseMove(xPlay+x - 155, yPlay+y - 179);
                     Thread.sleep(2000);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
