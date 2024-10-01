@@ -88,7 +88,6 @@ public class Logic {
         captureAndSearchTextScroll(robot, "findUsername.png", "userbryndio", "Launch bot");
         Thread.sleep(10000);
 
-
         captureAndSearchText(robot, "findPlay.png", "Wallet", "Wallet");
     }
 
@@ -193,7 +192,7 @@ public class Logic {
         int width = 488; // Ширина вікна
         int height = 872; // Висота вікна
         int gameplayIndex = 0;
-        long gameDuration = 30 * 1000;
+        long gameDuration = 30 * 1000;  // Час гри
         long startTime = System.currentTimeMillis();
 
         robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
@@ -213,6 +212,51 @@ public class Logic {
         }
 
         System.out.println("Game over: 30 seconds have passed.");
+
+        // Після завершення гри шукаємо кнопку "Play" і натискаємо на неї
+        while (true) {
+            System.out.println("Checking for Play button...");
+            if (findAndClickPlayButton(robot)) {
+                System.out.println("Found Play button! Starting a new game...");
+                playGame(robot);  // Розпочати гру знову
+                break;
+            } else {
+                System.out.println("Play button not found. Retrying in 3 seconds...");
+                Thread.sleep(3000);  // Пауза перед повторною спробою
+            }
+        }
+    }
+
+    public boolean findAndClickPlayButton(Robot robot) throws IOException, InterruptedException, AWTException {
+        // Робимо скріншот екрана
+        BufferedImage screenshot = robot.createScreenCapture(new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize()));
+        ImageIO.write(screenshot, "png", new File("findPlayAgain.png"));
+        Thread.sleep(1000);
+
+        // Використовуємо Tesseract для розпізнавання тексту на екрані
+        Tesseract tesseract = new Tesseract();
+        tesseract.setDatapath(dataPath);
+        tesseract.setLanguage("eng");
+
+        File imageFile = new File("findPlayAgain.png");
+        try {
+            String resultText = tesseract.doOCR(imageFile);
+            System.out.println("Recognized text: " + resultText);
+
+            // Шукаємо текст "Play" на скріншоті
+            if (resultText.contains("Play")) {
+                System.out.println("Found 'Play' button! Clicking...");
+
+                // Знайти координати та натиснути на кнопку Play
+                findAndClickText(robot, tesseract, screenshot, "Play", "Play");
+                return true;  // Play знайдено і натиснуто
+            } else {
+                System.out.println("Play button not found.");
+            }
+        } catch (TesseractException e) {
+            e.printStackTrace();
+        }
+        return false;  // Play не знайдено
     }
 
     public void detectObjects(Robot robot, String screenshotFilename, int x, int y) throws IOException, InterruptedException {
@@ -220,7 +264,7 @@ public class Logic {
 
         Mat hsvImage = new Mat();
         Imgproc.cvtColor(image, hsvImage, Imgproc.COLOR_BGR2HSV);
-        Scalar lowerGreen = new Scalar(35, 150, 160, 0); // Adjust to your green
+        Scalar lowerGreen = new Scalar(35, 150, 160, 0);
         Scalar upperGreen = new Scalar(70, 255, 255, 0);
 
         Mat mask = new Mat();
