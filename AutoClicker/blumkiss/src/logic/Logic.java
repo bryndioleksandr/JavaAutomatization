@@ -52,10 +52,9 @@ public class Logic {
         runTelegramBot(run, robot);
 
         if (findPlay) {
-            // Запуск гри
             playGame(robot);
         } else {
-            System.out.print("Couldnt find play btn. Fix it");
+            System.out.print("Couldn`t find play btn. Fix it");
         }
     }
 
@@ -80,14 +79,14 @@ public class Logic {
         String runChannel = "cmd /c start tg://resolve?domain=" + channel;
         String runBot = "cmd /c start tg://resolve?domain=" + bot + "&startapp";
         run.exec(runBot);
-        Thread.sleep(5000);
+        Thread.sleep(10000);
 
         captureAndSearchText(robot, "findLaunch.png", "Launch", "Launch bot");
 
-        Thread.sleep(5000);
+        Thread.sleep(10000);
 
         captureAndSearchTextScroll(robot, "findUsername.png", "userbryndio", "Launch bot");
-        Thread.sleep(5000);
+        Thread.sleep(10000);
 
 
         captureAndSearchText(robot, "findPlay.png", "@BlumCryptoBot", "Wallet");
@@ -126,7 +125,7 @@ public class Logic {
             int widthPlay = 488; // Ширина вікна
             int heightPlay = 872; // Висота вікна
             screenshot = new Robot().createScreenCapture(
-                    new java.awt.Rectangle(xPlay, yPlay, widthPlay, heightPlay)
+                    new java.awt.Rectangle((int) Math.round(xPlay * 0.8), (int) Math.round(yPlay * 0.8), (int) Math.round(widthPlay * 0.8), (int) Math.round(heightPlay * 0.8))
             );
         }
         else{
@@ -156,17 +155,31 @@ public class Logic {
         for (Word word : words) {
             if (word.getText().equalsIgnoreCase(searchText)) {
                 java.awt.Rectangle boundingBox = word.getBoundingBox();
+                int xPlay = 717; // Верхня ліва межа по X
+                int yPlay = 82;  // Верхня ліва межа по Y
+                int widthPlay = 488; // Ширина вікна
+                int heightPlay = 872; // Висота вікна
+
                 int x = boundingBox.x;
                 int y = boundingBox.y;
                 int width = boundingBox.width;
                 int height = boundingBox.height;
+                if(searchText.equals("@BlumCryptoBot")){
+                    robot.mouseMove(xPlay+x, yPlay+y - 230);
+                    Thread.sleep(2000);
+                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                    robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                    findPlay = true;
+                }
 
-                System.out.println("Found '" + foundText + "' at: " + x + ", " + y);
-                System.out.println("Bounding box size: " + width + "x" + height);
-                robot.mouseMove(x + 5, y + 8);
-                Thread.sleep(2000);
-                robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-                robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                else {
+                    System.out.println("Found '" + foundText + "' at: " + x + ", " + y);
+                    System.out.println("Bounding box size: " + width + "x" + height);
+                    robot.mouseMove(x + 5, y + 8);
+                    Thread.sleep(2000);
+                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                    robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                }
                 break;
             } else {
                 System.out.println("Cant find needed phrase. Found: " + word.getText());
