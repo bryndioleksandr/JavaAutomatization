@@ -170,6 +170,13 @@ public class Logic {
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
                     findPlay = true;
                 }
+                else if(searchText.matches("Rewards")){
+                    robot.mouseMove(xPlay+x, yPlay+y + 240);
+                    Thread.sleep(2000);
+                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                    robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                    findPlay = true;
+                }
 
                 else {
                     System.out.println("Found '" + foundText + "' at: " + x + ", " + y);
@@ -229,7 +236,13 @@ public class Logic {
 
     public boolean findAndClickPlayButton(Robot robot) throws IOException, InterruptedException, AWTException {
         // Робимо скріншот екрана
-        BufferedImage screenshot = robot.createScreenCapture(new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize()));
+        int x = 717; // Верхня ліва межа по X
+        int y = 82;  // Верхня ліва межа по Y
+        int width = 488; // Ширина вікна
+        int height = 872; // Висота вікна
+        BufferedImage screenshot = new Robot().createScreenCapture(
+                new java.awt.Rectangle((int) Math.round(x * 0.8), (int) Math.round(y * 0.8), (int) Math.round(width * 0.8), (int) Math.round(height * 0.8))
+        );
         ImageIO.write(screenshot, "png", new File("findPlayAgain.png"));
         Thread.sleep(1000);
 
@@ -244,11 +257,11 @@ public class Logic {
             System.out.println("Recognized text: " + resultText);
 
             // Шукаємо текст "Play" на скріншоті
-            if (resultText.contains("Play")) {
+            if (resultText.contains("Rewards")) {
                 System.out.println("Found 'Play' button! Clicking...");
 
                 // Знайти координати та натиснути на кнопку Play
-                findAndClickText(robot, tesseract, screenshot, "Play", "Play");
+                findAndClickText(robot, tesseract, screenshot, "Rewards", "Play");
                 return true;  // Play знайдено і натиснуто
             } else {
                 System.out.println("Play button not found.");
@@ -291,6 +304,7 @@ public class Logic {
                 Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                 starIndex++;
+                Thread.sleep(3);
             }
             else{
                 System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
