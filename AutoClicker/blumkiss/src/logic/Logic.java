@@ -256,7 +256,7 @@ public class Logic {
         } catch (TesseractException e) {
             e.printStackTrace();
         }
-        return false;  // Play не знайдено
+        return false; 
     }
 
     public void detectObjects(Robot robot, String screenshotFilename, int x, int y) throws IOException, InterruptedException {
@@ -279,17 +279,22 @@ public class Logic {
             int centerX = boundingRect.x + boundingRect.width / 2;
             int centerY = boundingRect.y + boundingRect.height / 2;
 
-            System.out.println("Snowflake found at x, y: " + centerX + ", " + centerY);
-            robot.mouseMove(centerX + (int) Math.round(x * 0.8), centerY + (int) Math.round(y * 0.8));
-            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            if(boundingRect.width > 15 && boundingRect.height > 15) {
+                System.out.println("Snowflake found at x, y: " + centerX + ", " + centerY);
+                robot.mouseMove(centerX + (int) Math.round(x * 0.8), centerY + (int) Math.round(y * 0.8));
+                robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 
-            Mat singleStarMask = new Mat(mask.size(), CvType.CV_8UC1, new Scalar(0));
-            Imgproc.drawContours(singleStarMask, contours, starIndex, new Scalar(255), -1);
-            String maskFilename = "masks\\star_mask_" + starIndex + ".png";
-            Imgcodecs.imwrite(maskFilename, singleStarMask);
+                Mat singleStarMask = new Mat(mask.size(), CvType.CV_8UC1, new Scalar(0));
+                Imgproc.drawContours(singleStarMask, contours, starIndex, new Scalar(255), -1);
+                String maskFilename = "masks\\star_mask_" + starIndex + ".png";
+                Imgcodecs.imwrite(maskFilename, singleStarMask);
 
-            starIndex++;
+                starIndex++;
+            }
+            else{
+                System.out.println("Object is too small, skipping it");
+            }
         }
 
         mask.release();
