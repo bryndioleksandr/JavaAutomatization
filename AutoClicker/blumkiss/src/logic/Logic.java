@@ -199,7 +199,7 @@ public class Logic {
         int width = 488; // Ширина вікна
         int height = 872; // Висота вікна
         int gameplayIndex = 0;
-        long gameDuration = 35 * 1000;  // Час гри
+        long gameDuration = 32 * 1000;  // Час гри
         long startTime = System.currentTimeMillis();
 
         robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
@@ -207,15 +207,28 @@ public class Logic {
         Thread.sleep(2000);
 
         while (System.currentTimeMillis() - startTime < gameDuration) {
-            BufferedImage screenshotGameplay = new Robot().createScreenCapture(
-                    new java.awt.Rectangle((int) Math.round(x * 0.8), (int) Math.round(y * 0.8), (int) Math.round(width * 0.8), (int) Math.round(height * 0.8))
-            );
-            gameplayIndex++;
-            String screenshotFilename = "gameplay\\gameplay_" + gameplayIndex + ".png";
-            File outputfile = new File(screenshotFilename);
-            ImageIO.write(screenshotGameplay, "png", outputfile);
+            while (System.currentTimeMillis() - startTime < gameDuration/2) {
+                BufferedImage screenshotGameplay = new Robot().createScreenCapture(
+                        new java.awt.Rectangle((int) Math.round(x * 0.8), (int) Math.round(y * 0.8), (int) Math.round(width * 0.8), (int) Math.round(height * 0.8))
+                );
+                gameplayIndex++;
+                String screenshotFilename = "gameplay\\gameplay_" + gameplayIndex + ".png";
+                File outputfile = new File(screenshotFilename);
+                ImageIO.write(screenshotGameplay, "png", outputfile);
 
-            detectObjects(robot, screenshotFilename, x, y);
+                detectObjects(robot, screenshotFilename, x, y);
+            }
+            while(System.currentTimeMillis() - startTime < gameDuration) {
+                BufferedImage screenshotGameplay = new Robot().createScreenCapture(
+                        new java.awt.Rectangle((int) Math.round(x * 0.8), (int) Math.round(y * 0.8), (int) Math.round(width * 0.8), (int) Math.round(height * 0.8))
+                );
+                gameplayIndex++;
+                String screenshotFilename = "gameplay\\gameplay_" + gameplayIndex + ".png";
+                File outputfile = new File(screenshotFilename);
+                ImageIO.write(screenshotGameplay, "png", outputfile);
+
+                detectObjectsSecondHalf(robot, screenshotFilename, x, y);
+            }
         }
 
         System.out.println("Game over: 30 seconds have passed.");
@@ -292,7 +305,7 @@ public class Logic {
             int centerX = boundingRect.x + boundingRect.width / 2;
             int centerY = boundingRect.y + boundingRect.height / 2;
 
-            if(boundingRect.width > 15 && boundingRect.height > 15) {
+            if(boundingRect.width > 20 && boundingRect.height > 20) {
                 System.out.println("Snowflake found at x, y: " + centerX + ", " + centerY);
                 robot.mouseMove(centerX + (int) Math.round(x * 0.8), centerY + (int) Math.round(y * 0.8));
                 robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
@@ -304,7 +317,51 @@ public class Logic {
                 Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                 starIndex++;
-                Thread.sleep(3);
+                Thread.sleep(5);
+            }
+            else{
+                System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
+            }
+        }
+
+        mask.release();
+        hsvImage.release();
+        image.release();
+    }
+
+    public void detectObjectsSecondHalf(Robot robot, String screenshotFilename, int x, int y) throws IOException, InterruptedException {
+        Mat image = Imgcodecs.imread(screenshotFilename);
+
+        Mat hsvImage = new Mat();
+        Imgproc.cvtColor(image, hsvImage, Imgproc.COLOR_BGR2HSV);
+        Scalar lowerGreen = new Scalar(35, 150, 160, 0);
+        Scalar upperGreen = new Scalar(70, 255, 255, 0);
+
+        Mat mask = new Mat();
+        Core.inRange(hsvImage, lowerGreen, upperGreen, mask);
+
+        List<MatOfPoint> contours = new java.util.ArrayList<>();
+        Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        int starIndex = 0;
+        for (MatOfPoint contour : contours) {
+            Rect boundingRect = Imgproc.boundingRect(contour);
+            int centerX = boundingRect.x + boundingRect.width / 2;
+            int centerY = boundingRect.y + boundingRect.height / 2;
+
+            if(boundingRect.width < 22 && boundingRect.height < 22 && boundingRect.width > 15 && boundingRect.height > 15) {
+                System.out.println("Snowflake found at x, y: " + centerX + ", " + centerY);
+                robot.mouseMove(centerX + (int) Math.round(x * 0.8), centerY + (int) Math.round(y * 0.8));
+                robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+
+                Mat singleStarMask = new Mat(mask.size(), CvType.CV_8UC1, new Scalar(0));
+                Imgproc.drawContours(singleStarMask, contours, starIndex, new Scalar(255), -1);
+                String maskFilename = "masks\\star_mask_" + starIndex + ".png";
+                Imgcodecs.imwrite(maskFilename, singleStarMask);
+
+                starIndex++;
+                Thread.sleep(5);
             }
             else{
                 System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
