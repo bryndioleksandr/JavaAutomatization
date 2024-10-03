@@ -192,7 +192,7 @@ public class Logic {
         int width = 488; // Ширина вікна
         int height = 872; // Висота вікна
         int gameplayIndex = 0;
-        long gameDuration = 30 * 1000;  // Час гри
+        long gameDuration = 35 * 1000;  // Час гри
         long startTime = System.currentTimeMillis();
 
         robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
@@ -293,7 +293,7 @@ public class Logic {
                 starIndex++;
             }
             else{
-                System.out.println("Object is too small, skipping it");
+                System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
             }
         }
 
