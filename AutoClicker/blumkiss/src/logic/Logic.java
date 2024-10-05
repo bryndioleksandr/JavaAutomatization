@@ -19,29 +19,18 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
+import config.Config;
+
 import java.util.Scanner;
+
+//
+//  TO DOWNLOAD ON THE NEW DEVICE: TESSERACT AND OPENCV. SET SYSTEM VARIABLE FOR OPENCV ROOT. AND GET ROOT OF TESSERACT
+//
 
 public class Logic {
     static {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
-
-    static String channel = "blumcrypto";
-    static String bot = "BlumCryptoBot";
-    static String dataPath = "C:\\Program Files\\Tesseract-OCR\\tessdata";
-    static boolean findPlay = false;
-    static int width = Toolkit.getDefaultToolkit().getScreenSize().width;
-    static int height = Toolkit.getDefaultToolkit().getScreenSize().height;
-    static int resolutionScale = Toolkit.getDefaultToolkit().getScreenResolution() / 96;
-    static String username;
-    static String launchPng = "findLaunch.png";
-    static String searchLaunch = "Launch";
-    static String launchBot = "Launch bot";
-
-    static String usernamePng = "findUsername.png";
-
-    static String playPng = "findPlay.png";
-    static String searchWallet = "Wallet";
 
     public static void main(String[] args) throws IOException, AWTException, InterruptedException {
         Logic logic = new Logic();
@@ -54,7 +43,8 @@ public class Logic {
 
         System.out.println("Size -> " + java.awt.Toolkit.getDefaultToolkit().getScreenSize());
 
-        username = scanner.nextLine();
+        System.out.print("Tg username: ");
+        Config.username = scanner.nextLine();
 
         logic.runTelegram();
     }
@@ -63,19 +53,28 @@ public class Logic {
         Robot robot = new Robot();
         Runtime run = Runtime.getRuntime();
 
-        if (isTelegramRunning()) {
-            killProcess("Telegram.exe");
+        if(Config.osName.contains("Windows")) {
+            if (isTelegramRunning()) {
+                killProcess("Telegram.exe");
+                Thread.sleep(1000);
+            }
+
+            run.exec("Telegram.exe");
+            Thread.sleep(1000);
+        }
+        else{
+            if (isTelegramRunning()) {
+                killProcess("Telegram");
+                Thread.sleep(1000);
+            }
+
+            run.exec("open -a Telegram");
             Thread.sleep(1000);
         }
 
-        // Запуск Telegram
-        run.exec("C:\\Users\\sanya\\AppData\\Roaming\\Telegram Desktop\\Telegram.exe");
-        Thread.sleep(1000);
-
-        // Запуск бота
         runTelegramBot(run, robot);
 
-        if (findPlay) {
+        if (Config.findPlay) {
             playGame(robot);
         } else {
             System.out.print("Couldn`t find play btn. Fix it");
@@ -83,36 +82,52 @@ public class Logic {
     }
 
     public boolean isTelegramRunning() throws IOException {
-        Process process = Runtime.getRuntime().exec("tasklist");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (line.contains("Telegram.exe") || line.contains("telegram.exe")) {
-                return true;
+        if(Config.osName.contains("Windows")) {
+            Process process = Runtime.getRuntime().exec("tasklist");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("Telegram.exe") || line.contains("telegram.exe")) {
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
+        else{
+            Process process = Runtime.getRuntime().exec("ps -A");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("Telegram") || line.contains("telegram")) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
-    // Завершення процесу
     public void killProcess(String processName) throws IOException {
+        if(Config.osName.contains("Windows"))
         Runtime.getRuntime().exec("taskkill /IM " + processName + " /F");
+        else
+            Runtime.getRuntime().exec("pkill -f " + processName);
     }
 
     public void runTelegramBot(Runtime run, Robot robot) throws IOException, InterruptedException, AWTException {
-        String runChannel = "cmd /c start tg://resolve?domain=" + channel;
-        String runBot = "cmd /c start tg://resolve?domain=" + bot + "&startapp";
+        String runBot;
+        if(Config.osName.contains("Windows")) runBot = "cmd /c start tg://resolve?domain=" + Config.bot + "&startapp";
+        else runBot = "open tg://resolve?domain=" + Config.bot + "&startapp";
         run.exec(runBot);
         Thread.sleep(10000);
 
-        captureAndSearchText(robot, launchPng, searchLaunch, launchBot);
+        captureAndSearchText(robot, Config.launchPng, Config.searchLaunch, Config.launchBot);
 
         Thread.sleep(10000);
 
-        captureAndSearchTextScroll(robot, usernamePng, username, username);
+        captureAndSearchTextScroll(robot, Config.usernamePng, Config.username, Config.username);
         Thread.sleep(2500);
 
-        captureAndSearchText(robot, playPng, searchWallet, searchWallet);
+        captureAndSearchText(robot, Config.playPng, Config.searchWallet, Config.searchWallet);
 
     }
 
@@ -126,7 +141,7 @@ public class Logic {
         Thread.sleep(1000);
 
         Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath(dataPath);
+        tesseract.setDatapath(Config.dataPath);
         tesseract.setLanguage("eng");
 
         File imageFile = new File(fileName);
@@ -145,10 +160,10 @@ public class Logic {
         BufferedImage screenshot;
         if(searchText.equals("Wallet")){
 
-            int xPlay = (717*width)/1920;
-            int yPlay = (82*height)/1080;
-            int widthPlay = (488*width)/1920;
-            int heightPlay = (872*height)/1080;
+            int xPlay = (717*Config.width)/1920;
+            int yPlay = (82*Config.height)/1080;
+            int widthPlay = (488*Config.width)/1920;
+            int heightPlay = (872*Config.height)/1080;
             screenshot = new Robot().createScreenCapture(
                     new java.awt.Rectangle(xPlay, yPlay , widthPlay, heightPlay)
             );
@@ -161,7 +176,7 @@ public class Logic {
         Thread.sleep(1000);
 
         Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath(dataPath);
+        tesseract.setDatapath(Config.dataPath);
         tesseract.setLanguage("eng");
 
         File imageFile = new File(fileName);
@@ -180,26 +195,26 @@ public class Logic {
         for (Word word : words) {
             if (word.getText().equalsIgnoreCase(searchText)) {
                 java.awt.Rectangle boundingBox = word.getBoundingBox();
-                int xPlay = (717*width)/1920;
-                int yPlay = (82*height)/1080;
+                int xPlay = (717*Config.width)/1920;
+                int yPlay = (82*Config.height)/1080;
 
                 int x = boundingBox.x;
                 int y = boundingBox.y;
                 int widthBox = boundingBox.width;
                 int heightBox = boundingBox.height;
                 if(searchText.matches("Wallet")){
-                    robot.mouseMove(xPlay+x, yPlay+y - ((225*width)/1920));
+                    robot.mouseMove(xPlay+x, yPlay+y - ((225*Config.width)/1920));
                     Thread.sleep(2000);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                    findPlay = true;
+                    Config.findPlay = true;
                 }
                 else if(searchText.matches("Rewards")){
-                    robot.mouseMove(xPlay+x, yPlay+y + ((300*width)/1920));
+                    robot.mouseMove(xPlay+x, yPlay+y + ((300*Config.width)/1920));
                     Thread.sleep(2000);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                    findPlay = true;
+                    Config.findPlay = true;
                 }
 
                 else {
@@ -218,10 +233,10 @@ public class Logic {
     }
 
     public void playGame(Robot robot) throws IOException, InterruptedException, AWTException {
-        int xPlay = (717*width)/1920;
-        int yPlay = (82*height)/1080;
-        int widthPlay = (488*width)/1920;
-        int heightPlay = (872*height)/1080;
+        int xPlay = (717*Config.width)/1920;
+        int yPlay = (82*Config.height)/1080;
+        int widthPlay = (488*Config.width)/1920;
+        int heightPlay = (872*Config.height)/1080;
         int gameplayIndex = 0;
         long gameDuration = 32 * 1000;
         long startTime = System.currentTimeMillis();
@@ -273,10 +288,10 @@ public class Logic {
     }
 
     public boolean findAndClickPlayButton(Robot robot) throws IOException, InterruptedException, AWTException {
-        int xPlay = (717*width)/1920;
-        int yPlay = (82*height)/1080;
-        int widthPlay = (488*width)/1920;
-        int heightPlay = (872*height)/1080;
+        int xPlay = (717*Config.width)/1920;
+        int yPlay = (82*Config.height)/1080;
+        int widthPlay = (488*Config.width)/1920;
+        int heightPlay = (872*Config.height)/1080;
         BufferedImage screenshot = new Robot().createScreenCapture(
                 new java.awt.Rectangle(xPlay, yPlay , widthPlay, heightPlay)
         );
@@ -284,7 +299,7 @@ public class Logic {
         Thread.sleep(1000);
 
         Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath(dataPath);
+        tesseract.setDatapath(Config.dataPath);
         tesseract.setLanguage("eng");
 
         File imageFile = new File("findPlayAgain.png");
