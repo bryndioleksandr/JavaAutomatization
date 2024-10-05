@@ -1,7 +1,6 @@
 package logic;
 
-import java.awt.AWTException;
-import java.awt.Robot;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.awt.image.BufferedImage;
@@ -20,6 +19,8 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
+import java.util.Scanner;
+
 public class Logic {
     static {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -29,9 +30,32 @@ public class Logic {
     static String bot = "BlumCryptoBot";
     static String dataPath = "C:\\Program Files\\Tesseract-OCR\\tessdata";
     static boolean findPlay = false;
+    static int width = Toolkit.getDefaultToolkit().getScreenSize().width;
+    static int height = Toolkit.getDefaultToolkit().getScreenSize().height;
+    static int resolutionScale = Toolkit.getDefaultToolkit().getScreenResolution() / 96;
+    static String username;
+    static String launchPng = "findLaunch.png";
+    static String searchLaunch = "Launch";
+    static String launchBot = "Launch bot";
+
+    static String usernamePng = "findUsername.png";
+
+    static String playPng = "findPlay.png";
+    static String searchWallet = "Wallet";
 
     public static void main(String[] args) throws IOException, AWTException, InterruptedException {
         Logic logic = new Logic();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Your OS name -> " + System.getProperty("os.name"));
+
+        System.out.println("Your OS version -> " + System.getProperty("os.version"));
+
+        System.out.println("Resolution -> " + java.awt.Toolkit.getDefaultToolkit().getScreenResolution());
+
+        System.out.println("Size -> " + java.awt.Toolkit.getDefaultToolkit().getScreenSize());
+
+        username = scanner.nextLine();
+
         logic.runTelegram();
     }
 
@@ -81,14 +105,15 @@ public class Logic {
         run.exec(runBot);
         Thread.sleep(10000);
 
-        captureAndSearchText(robot, "findLaunch.png", "Launch", "Launch bot");
+        captureAndSearchText(robot, launchPng, searchLaunch, launchBot);
 
         Thread.sleep(10000);
 
-        captureAndSearchTextScroll(robot, "findUsername.png", "userbryndio", "Launch bot");
-        Thread.sleep(10000);
+        captureAndSearchTextScroll(robot, usernamePng, username, username);
+        Thread.sleep(2500);
 
-        captureAndSearchText(robot, "findPlay.png", "Wallet", "Wallet");
+        captureAndSearchText(robot, playPng, searchWallet, searchWallet);
+
     }
 
     public void scrollToPlay(Robot robot) {
@@ -119,12 +144,13 @@ public class Logic {
     public void captureAndSearchText(Robot robot, String fileName, String searchText, String foundText) throws AWTException, IOException, InterruptedException {
         BufferedImage screenshot;
         if(searchText.equals("Wallet")){
-            int xPlay = 717; // Верхня ліва межа по X
-            int yPlay = 82;  // Верхня ліва межа по Y
-            int widthPlay = 488; // Ширина вікна
-            int heightPlay = 872; // Висота вікна
+
+            int xPlay = (717*width)/1920;
+            int yPlay = (82*height)/1080;
+            int widthPlay = (488*width)/1920;
+            int heightPlay = (872*height)/1080;
             screenshot = new Robot().createScreenCapture(
-                    new java.awt.Rectangle((int) Math.round(xPlay * 0.8), (int) Math.round(yPlay * 0.8), (int) Math.round(widthPlay * 0.8), (int) Math.round(heightPlay * 0.8))
+                    new java.awt.Rectangle(xPlay, yPlay , widthPlay, heightPlay)
             );
         }
         else{
@@ -154,24 +180,22 @@ public class Logic {
         for (Word word : words) {
             if (word.getText().equalsIgnoreCase(searchText)) {
                 java.awt.Rectangle boundingBox = word.getBoundingBox();
-                int xPlay = 717; // Верхня ліва межа по X
-                int yPlay = 82;  // Верхня ліва межа по Y
-                int widthPlay = 488; // Ширина вікна
-                int heightPlay = 872; // Висота вікна
+                int xPlay = (717*width)/1920;
+                int yPlay = (82*height)/1080;
 
                 int x = boundingBox.x;
                 int y = boundingBox.y;
-                int width = boundingBox.width;
-                int height = boundingBox.height;
+                int widthBox = boundingBox.width;
+                int heightBox = boundingBox.height;
                 if(searchText.matches("Wallet")){
-                    robot.mouseMove(xPlay+x - 155, yPlay+y - 179);
+                    robot.mouseMove(xPlay+x, yPlay+y - ((225*width)/1920));
                     Thread.sleep(2000);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
                     findPlay = true;
                 }
                 else if(searchText.matches("Rewards")){
-                    robot.mouseMove(xPlay+x, yPlay+y + 240);
+                    robot.mouseMove(xPlay+x, yPlay+y + ((300*width)/1920));
                     Thread.sleep(2000);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
@@ -180,7 +204,7 @@ public class Logic {
 
                 else {
                     System.out.println("Found '" + foundText + "' at: " + x + ", " + y);
-                    System.out.println("Bounding box size: " + width + "x" + height);
+                    System.out.println("Bounding box size: " + widthBox + "x" + heightBox);
                     robot.mouseMove(x + 5, y + 8);
                     Thread.sleep(2000);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
@@ -194,12 +218,12 @@ public class Logic {
     }
 
     public void playGame(Robot robot) throws IOException, InterruptedException, AWTException {
-        int x = 717; // Верхня ліва межа по X
-        int y = 82;  // Верхня ліва межа по Y
-        int width = 488; // Ширина вікна
-        int height = 872; // Висота вікна
+        int xPlay = (717*width)/1920;
+        int yPlay = (82*height)/1080;
+        int widthPlay = (488*width)/1920;
+        int heightPlay = (872*height)/1080;
         int gameplayIndex = 0;
-        long gameDuration = 32 * 1000;  // Час гри
+        long gameDuration = 32 * 1000;
         long startTime = System.currentTimeMillis();
 
         robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
@@ -209,26 +233,26 @@ public class Logic {
         while (System.currentTimeMillis() - startTime < gameDuration) {
             while (System.currentTimeMillis() - startTime < gameDuration/2) {
                 BufferedImage screenshotGameplay = new Robot().createScreenCapture(
-                        new java.awt.Rectangle((int) Math.round(x * 0.8), (int) Math.round(y * 0.8), (int) Math.round(width * 0.8), (int) Math.round(height * 0.8))
+                        new java.awt.Rectangle(xPlay, yPlay , widthPlay, heightPlay)
                 );
                 gameplayIndex++;
                 String screenshotFilename = "gameplay\\gameplay_" + gameplayIndex + ".png";
                 File outputfile = new File(screenshotFilename);
                 ImageIO.write(screenshotGameplay, "png", outputfile);
 
-                detectObjects(robot, screenshotFilename, x, y);
+                detectObjects(robot, screenshotFilename, xPlay, yPlay);
                 Thread.sleep(200);
             }
             while(System.currentTimeMillis() - startTime < gameDuration) {
                 BufferedImage screenshotGameplay = new Robot().createScreenCapture(
-                        new java.awt.Rectangle((int) Math.round(x * 0.8), (int) Math.round(y * 0.8), (int) Math.round(width * 0.8), (int) Math.round(height * 0.8))
+                        new java.awt.Rectangle(xPlay, yPlay , widthPlay, heightPlay)
                 );
                 gameplayIndex++;
                 String screenshotFilename = "gameplay\\gameplay_" + gameplayIndex + ".png";
                 File outputfile = new File(screenshotFilename);
                 ImageIO.write(screenshotGameplay, "png", outputfile);
 
-                detectObjectsSecondHalf(robot, screenshotFilename, x, y);
+                detectObjectsSecondHalf(robot, screenshotFilename, xPlay, yPlay);
                 Thread.sleep(200);
             }
         }
@@ -239,28 +263,26 @@ public class Logic {
             System.out.println("Checking for Play button...");
             if (findAndClickPlayButton(robot)) {
                 System.out.println("Found Play button! Starting a new game...");
-                playGame(robot);  // Розпочати гру знову
+                playGame(robot);
                 break;
             } else {
                 System.out.println("Play button not found. Retrying in 3 seconds...");
-                Thread.sleep(3000);  // Пауза перед повторною спробою
+                Thread.sleep(3000);
             }
         }
     }
 
     public boolean findAndClickPlayButton(Robot robot) throws IOException, InterruptedException, AWTException {
-        // Робимо скріншот екрана
-        int x = 717; // Верхня ліва межа по X
-        int y = 82;  // Верхня ліва межа по Y
-        int width = 488; // Ширина вікна
-        int height = 872; // Висота вікна
+        int xPlay = (717*width)/1920;
+        int yPlay = (82*height)/1080;
+        int widthPlay = (488*width)/1920;
+        int heightPlay = (872*height)/1080;
         BufferedImage screenshot = new Robot().createScreenCapture(
-                new java.awt.Rectangle((int) Math.round(x * 0.8), (int) Math.round(y * 0.8), (int) Math.round(width * 0.8), (int) Math.round(height * 0.8))
+                new java.awt.Rectangle(xPlay, yPlay , widthPlay, heightPlay)
         );
         ImageIO.write(screenshot, "png", new File("findPlayAgain.png"));
         Thread.sleep(1000);
 
-        // Використовуємо Tesseract для розпізнавання тексту на екрані
         Tesseract tesseract = new Tesseract();
         tesseract.setDatapath(dataPath);
         tesseract.setLanguage("eng");
@@ -270,13 +292,11 @@ public class Logic {
             String resultText = tesseract.doOCR(imageFile);
             System.out.println("Recognized text: " + resultText);
 
-            // Шукаємо текст "Play" на скріншоті
             if (resultText.contains("Rewards")) {
                 System.out.println("Found 'Play' button! Clicking...");
 
-                // Знайти координати та натиснути на кнопку Play
                 findAndClickText(robot, tesseract, screenshot, "Rewards", "Play");
-                return true;  // Play знайдено і натиснуто
+                return true;
             } else {
                 System.out.println("Play button not found.");
             }
@@ -308,7 +328,7 @@ public class Logic {
 
             if(boundingRect.width > 20 && boundingRect.height > 20) {
                 System.out.println("Snowflake found at x, y: " + centerX + ", " + centerY);
-                robot.mouseMove(centerX + (int) Math.round(x * 0.8), centerY + (int) Math.round(y * 0.8));
+                robot.mouseMove(centerX + x, centerY + y);
                 robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                 robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 
@@ -352,7 +372,7 @@ public class Logic {
 
             if(boundingRect.width < 22 && boundingRect.height < 22 && boundingRect.width > 15 && boundingRect.height > 15) {
                 System.out.println("Snowflake found at x, y: " + centerX + ", " + centerY);
-                robot.mouseMove(centerX + (int) Math.round(x * 0.8), centerY + (int) Math.round(y * 0.8));
+                robot.mouseMove(centerX + x, centerY + y);
                 robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                 robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 
