@@ -217,6 +217,7 @@ public class Logic {
                 ImageIO.write(screenshotGameplay, "png", outputfile);
 
                 detectObjects(robot, screenshotFilename, x, y);
+                Thread.sleep(200);
             }
             while(System.currentTimeMillis() - startTime < gameDuration) {
                 BufferedImage screenshotGameplay = new Robot().createScreenCapture(
@@ -228,12 +229,12 @@ public class Logic {
                 ImageIO.write(screenshotGameplay, "png", outputfile);
 
                 detectObjectsSecondHalf(robot, screenshotFilename, x, y);
+                Thread.sleep(200);
             }
         }
 
         System.out.println("Game over: 30 seconds have passed.");
 
-        // Після завершення гри шукаємо кнопку "Play" і натискаємо на неї
         while (true) {
             System.out.println("Checking for Play button...");
             if (findAndClickPlayButton(robot)) {
@@ -317,7 +318,7 @@ public class Logic {
                 Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                 starIndex++;
-                Thread.sleep(5);
+                Thread.sleep(6);
             }
             else{
                 System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
@@ -361,7 +362,7 @@ public class Logic {
                 Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                 starIndex++;
-                Thread.sleep(5);
+                Thread.sleep(8);
             }
             else{
                 System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
