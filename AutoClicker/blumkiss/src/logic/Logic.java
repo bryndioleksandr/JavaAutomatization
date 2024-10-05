@@ -20,7 +20,6 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
 import config.Config;
-
 import java.util.Scanner;
 
 //
@@ -36,9 +35,7 @@ public class Logic {
         Logic logic = new Logic();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Your OS name -> " + System.getProperty("os.name"));
-
-        System.out.println("Your OS version -> " + System.getProperty("os.version"));
-
+        
         System.out.println("Resolution -> " + java.awt.Toolkit.getDefaultToolkit().getScreenResolution());
 
         System.out.println("Size -> " + java.awt.Toolkit.getDefaultToolkit().getScreenSize());
