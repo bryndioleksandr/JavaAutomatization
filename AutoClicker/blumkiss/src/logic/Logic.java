@@ -26,6 +26,7 @@ import java.util.Scanner;
 //  TO DOWNLOAD ON THE NEW DEVICE: TESSERACT AND OPENCV. SET SYSTEM VARIABLE FOR OPENCV ROOT. AND GET ROOT OF TESSERACT
 //
 
+
 public class Logic {
     static {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
