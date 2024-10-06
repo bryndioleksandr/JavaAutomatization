@@ -48,17 +48,17 @@ public class OCRService {
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
                     Config.findPlay = true;
                 } else {
-                    System.out.println("Found '" + foundText + "' at: " + x + ", " + y);
-                    System.out.println("Bounding box size: " + widthBox + "x" + heightBox);
+                    // System.out.println("Found '" + foundText + "' at: " + x + ", " + y);
+                    //System.out.println("Bounding box size: " + widthBox + "x" + heightBox);
                     robot.mouseMove(x + 5, y + 8);
                     Thread.sleep(2000);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
                 }
                 break;
-            } else {
-                System.out.println("Cant find needed phrase. Found: " + word.getText());
-            }
+            } //else {
+               // System.out.println("Cant find needed phrase. Found: " + word.getText());
+            //}
         }
     }
 
@@ -80,16 +80,16 @@ public class OCRService {
         File imageFile = new File("findPlayAgain.png");
         try {
             String resultText = tesseract.doOCR(imageFile);
-            System.out.println("Recognized text: " + resultText);
+            //System.out.println("Recognized text: " + resultText);
 
             if (resultText.contains("Rewards")) {
-                System.out.println("Found 'Play' button! Clicking...");
+                //System.out.println("Found 'Play' button! Clicking...");
 
                 findAndClickText(robot, screenshot, "Rewards", "Play");
                 return true;
-            } else {
-                System.out.println("Play button not found.");
-            }
+            } //else {
+                //System.out.println("Play button not found.");
+            //}
         } catch (TesseractException e) {
             e.printStackTrace();
         }
