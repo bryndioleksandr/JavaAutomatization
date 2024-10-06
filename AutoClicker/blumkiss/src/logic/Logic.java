@@ -31,20 +31,20 @@ public class Logic {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-    public static void main(String[] args) throws IOException, AWTException, InterruptedException {
-        Logic logic = new Logic();
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Your OS name -> " + System.getProperty("os.name"));
-        
-        System.out.println("Resolution -> " + java.awt.Toolkit.getDefaultToolkit().getScreenResolution());
-
-        System.out.println("Size -> " + java.awt.Toolkit.getDefaultToolkit().getScreenSize());
-
-        System.out.print("Tg username: ");
-        Config.username = scanner.nextLine();
-
-        logic.runTelegram();
-    }
+//    public static void main(String[] args) throws IOException, AWTException, InterruptedException {
+//        Logic logic = new Logic();
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.println("Your OS name -> " + System.getProperty("os.name"));
+//
+//        System.out.println("Resolution -> " + java.awt.Toolkit.getDefaultToolkit().getScreenResolution());
+//
+//        System.out.println("Size -> " + java.awt.Toolkit.getDefaultToolkit().getScreenSize());
+//
+//        System.out.print("Tg username: ");
+//        Config.username = scanner.nextLine();
+//
+//        logic.runTelegram();
+//    }
 
     public void runTelegram() throws IOException, AWTException, InterruptedException {
         Robot robot = new Robot();
@@ -315,7 +315,7 @@ public class Logic {
         } catch (TesseractException e) {
             e.printStackTrace();
         }
-        return false; 
+        return false;
     }
 
     public void detectObjects(Robot robot, String screenshotFilename, int x, int y) throws IOException, InterruptedException {

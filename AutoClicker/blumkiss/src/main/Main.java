@@ -4,11 +4,12 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.Scanner;
 
+import net.sourceforge.tess4j.TesseractException;
 import telegram.TelegramAutomation;
 import config.Config;
 
 public class Main {
-    public static void main(String[] args) throws IOException, AWTException, InterruptedException {
+    public static void main(String[] args) throws IOException, AWTException, InterruptedException, TesseractException {
         TelegramAutomation telegramAutomation = new TelegramAutomation();
         Scanner scanner = new Scanner(System.in);
 

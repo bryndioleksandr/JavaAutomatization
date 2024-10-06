@@ -8,13 +8,16 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import config.Config;
+import ocr.OCRService;
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import java.util.List;
 
 public class GameHandler {
-
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
     private final Robot robot;
 
     public GameHandler(Robot robot) {
@@ -58,6 +61,19 @@ public class GameHandler {
 
                 detectObjectsSecondHalf(screenshotFilename, xPlay, yPlay);
                 Thread.sleep(200);
+            }
+        }
+
+
+        while (true) {
+            System.out.println("Checking for Play button...");
+            if (OCRService.findAndClickPlayButton(robot)) {
+                System.out.println("Found Play button! Starting a new game...");
+                playGame();
+                break;
+            } else {
+                System.out.println("Play button not found. Retrying in 3 seconds...");
+                Thread.sleep(3000);
             }
         }
     }
