@@ -8,6 +8,7 @@ import net.sourceforge.tess4j.*;
 import net.sourceforge.lept4j.*;
 import config.Config;
 import java.util.List;
+import ocr.*;
 
 public class ImageProcessor {
 
@@ -17,7 +18,7 @@ public class ImageProcessor {
         ocrService = new OCRService();
     }
 
-    public void captureAndSearchText(Robot robot, String fileName, String searchText, String foundText) throws AWTException, IOException, InterruptedException {
+    public void captureAndSearchText(Robot robot, String fileName, String searchText, String foundText) throws AWTException, IOException, InterruptedException, TesseractException {
         BufferedImage screenshot = robot.createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
         ImageIO.write(screenshot, "png", new File(fileName));
         Thread.sleep(1000);
@@ -27,7 +28,7 @@ public class ImageProcessor {
         ocrService.findAndClickText(robot, screenshot, searchText, foundText);
     }
 
-    public void captureAndSearchTextScroll(Robot robot, String fileName, String searchText, String foundText) throws AWTException, IOException, InterruptedException {
+    public void captureAndSearchTextScroll(Robot robot, String fileName, String searchText, String foundText) throws AWTException, IOException, InterruptedException, TesseractException {
         BufferedImage screenshot = robot.createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
         ImageIO.write(screenshot, "png", new File(fileName));
         Thread.sleep(1000);

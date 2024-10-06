@@ -3,7 +3,8 @@ package telegram;
 import java.awt.*;
 import java.io.*;
 import config.Config;
-import imageprocessing.ImageProcessor;
+import imageProcessing.ImageProcessor;
+import net.sourceforge.tess4j.TesseractException;
 import ocr.OCRService;
 import game.GameHandler;
 
@@ -17,7 +18,7 @@ public class TelegramAutomation {
         imageProcessor = new ImageProcessor();
     }
 
-    public void runTelegram() throws IOException, AWTException, InterruptedException {
+    public void runTelegram() throws IOException, AWTException, InterruptedException, TesseractException {
         Robot robot = new Robot();
         Runtime runtime = Runtime.getRuntime();
 
@@ -62,7 +63,7 @@ public class TelegramAutomation {
         Runtime.getRuntime().exec(command);
     }
 
-    private void runTelegramBot(Runtime runtime, Robot robot) throws IOException, InterruptedException, AWTException {
+    private void runTelegramBot(Runtime runtime, Robot robot) throws IOException, InterruptedException, AWTException, TesseractException {
         String runBotCommand = Config.osName.contains("Windows") ?
                 "cmd /c start tg://resolve?domain=" + Config.bot + "&startapp" :
                 "open tg://resolve?domain=" + Config.bot + "&startapp";
