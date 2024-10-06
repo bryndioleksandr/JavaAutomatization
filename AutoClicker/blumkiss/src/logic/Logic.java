@@ -31,20 +31,20 @@ public class Logic {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-//    public static void main(String[] args) throws IOException, AWTException, InterruptedException {
-//        Logic logic = new Logic();
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Your OS name -> " + System.getProperty("os.name"));
-//
-//        System.out.println("Resolution -> " + java.awt.Toolkit.getDefaultToolkit().getScreenResolution());
-//
-//        System.out.println("Size -> " + java.awt.Toolkit.getDefaultToolkit().getScreenSize());
-//
-//        System.out.print("Tg username: ");
-//        Config.username = scanner.nextLine();
-//
-//        logic.runTelegram();
-//    }
+    public static void main(String[] args) throws IOException, AWTException, InterruptedException {
+        Logic logic = new Logic();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Your OS name -> " + System.getProperty("os.name"));
+
+        System.out.println("Resolution -> " + java.awt.Toolkit.getDefaultToolkit().getScreenResolution());
+
+        System.out.println("Size -> " + java.awt.Toolkit.getDefaultToolkit().getScreenSize());
+
+        System.out.print("Tg username: ");
+        Config.username = scanner.nextLine();
+
+        logic.runTelegram();
+    }
 
     public void runTelegram() throws IOException, AWTException, InterruptedException {
         Robot robot = new Robot();
@@ -350,7 +350,7 @@ public class Logic {
                 Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                 starIndex++;
-                Thread.sleep(6);
+                //Thread.sleep(6);
             }
             else{
                 System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
@@ -394,7 +394,7 @@ public class Logic {
                 Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                 starIndex++;
-                Thread.sleep(8);
+              //  Thread.sleep(8);
             }
             else{
                 System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
