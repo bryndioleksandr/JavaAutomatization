@@ -350,7 +350,7 @@ public class Logic {
                 Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                 starIndex++;
-                //Thread.sleep(6);
+                Thread.sleep(4);
             }
             else{
                 System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
@@ -394,7 +394,7 @@ public class Logic {
                 Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                 starIndex++;
-              //  Thread.sleep(8);
+                Thread.sleep(6);
             }
             else{
                 System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
