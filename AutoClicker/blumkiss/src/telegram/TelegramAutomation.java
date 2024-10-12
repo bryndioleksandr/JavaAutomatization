@@ -70,6 +70,7 @@ public class TelegramAutomation {
         runtime.exec(runBotCommand);
         Thread.sleep(10000);
 
+
         imageProcessor.captureAndSearchText(robot, Config.launchPng, Config.searchLaunch, Config.launchBot);
         Thread.sleep(10000);
         imageProcessor.captureAndSearchTextScroll(robot, Config.usernamePng, Config.username, Config.username);

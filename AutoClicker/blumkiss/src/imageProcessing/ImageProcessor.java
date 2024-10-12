@@ -20,6 +20,7 @@ public class ImageProcessor {
 
     public void captureAndSearchText(Robot robot, String fileName, String searchText, String foundText) throws AWTException, IOException, InterruptedException, TesseractException {
         BufferedImage screenshot;
+
         if(searchText.equals("Wallet")){
 
             int xPlay = (717*Config.width)/1920;

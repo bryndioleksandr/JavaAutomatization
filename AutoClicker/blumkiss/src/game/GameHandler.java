@@ -101,7 +101,7 @@ public class GameHandler {
                 robot.mouseMove(centerX + x, centerY + y);
                 robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                 robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                Thread.sleep(6);
+                Thread.sleep(4);
             }
         }
 
@@ -134,7 +134,7 @@ public class GameHandler {
                 robot.mouseMove(centerX + x, centerY + y);
                 robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                 robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                Thread.sleep(8);
+                Thread.sleep(6);
             }
         }
 
