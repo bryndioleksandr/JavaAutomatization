@@ -31,20 +31,20 @@ public class Logic {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-//    public static void main(String[] args) throws IOException, AWTException, InterruptedException {
-//        Logic logic = new Logic();
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Your OS name -> " + System.getProperty("os.name"));
-//
-//        System.out.println("Resolution -> " + java.awt.Toolkit.getDefaultToolkit().getScreenResolution());
-//
-//        System.out.println("Size -> " + java.awt.Toolkit.getDefaultToolkit().getScreenSize());
-//
-//        System.out.print("Tg username: ");
-//        Config.username = scanner.nextLine();
-//
-//        logic.runTelegram();
-//    }
+    public static void main(String[] args) throws IOException, AWTException, InterruptedException {
+        Logic logic = new Logic();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Your OS name -> " + System.getProperty("os.name"));
+
+        System.out.println("Resolution -> " + java.awt.Toolkit.getDefaultToolkit().getScreenResolution());
+
+        System.out.println("Size -> " + java.awt.Toolkit.getDefaultToolkit().getScreenSize());
+
+        System.out.print("Tg username: ");
+        Config.username = scanner.nextLine();
+
+        logic.runTelegram();
+    }
 
     public void runTelegram() throws IOException, AWTException, InterruptedException {
         Robot robot = new Robot();
@@ -180,6 +180,7 @@ public class Logic {
         try {
             String resultText = tesseract.doOCR(imageFile);
             System.out.println(resultText);
+            Thread.sleep(1500);
             findAndClickText(robot, tesseract, screenshot, searchText, foundText);
         } catch (TesseractException e) {
             e.printStackTrace();
@@ -273,6 +274,7 @@ public class Logic {
 
         while (true) {
             System.out.println("Checking for Play button...");
+            Thread.sleep(1500);
             if (findAndClickPlayButton(robot)) {
                 System.out.println("Found Play button! Starting a new game...");
                 playGame(robot);
