@@ -42,8 +42,15 @@ public class Logic {
 
         System.out.print("Tg username: ");
         Config.username = scanner.nextLine();
-
-        logic.runTelegram();
+        Thread.sleep(10000);
+        Robot robot = new Robot();
+        Runtime run = Runtime.getRuntime();
+        logic.runTelegramBot(run, robot);
+        if (Config.findPlay) {
+            logic.playGame(robot);
+        } else {
+            System.out.print("Couldn`t find play btn. Fix it");
+        }
     }
 
     public void runTelegram() throws IOException, AWTException, InterruptedException {
@@ -71,11 +78,11 @@ public class Logic {
 
         runTelegramBot(run, robot);
 
-        if (Config.findPlay) {
-            playGame(robot);
-        } else {
-            System.out.print("Couldn`t find play btn. Fix it");
-        }
+//        if (Config.findPlay) {
+//            playGame(robot);
+//        } else {
+//            System.out.print("Couldn`t find play btn. Fix it");
+//        }
     }
 
     public boolean isTelegramRunning() throws IOException {
@@ -111,18 +118,18 @@ public class Logic {
     }
 
     public void runTelegramBot(Runtime run, Robot robot) throws IOException, InterruptedException, AWTException {
-        String runBot;
-        if(Config.osName.contains("Windows")) runBot = "cmd /c start tg://resolve?domain=" + Config.bot + "&startapp";
-        else runBot = "open tg://resolve?domain=" + Config.bot + "&startapp";
-        run.exec(runBot);
-        Thread.sleep(10000);
-
-        captureAndSearchText(robot, Config.launchPng, Config.searchLaunch, Config.launchBot);
-
-        Thread.sleep(10000);
-
-        captureAndSearchTextScroll(robot, Config.usernamePng, Config.username, Config.username);
-        Thread.sleep(2500);
+//        String runBot;
+//        if(Config.osName.contains("Windows")) runBot = "cmd /c start tg://resolve?domain=" + Config.bot + "&startapp";
+//        else runBot = "open tg://resolve?domain=" + Config.bot + "&startapp";
+//        run.exec(runBot);
+//        Thread.sleep(10000);
+//
+//        captureAndSearchText(robot, Config.launchPng, Config.searchLaunch, Config.launchBot);
+//
+//        Thread.sleep(10000);
+//
+//        captureAndSearchTextScroll(robot, Config.usernamePng, Config.username, Config.username);
+//        Thread.sleep(2500);
 
         captureAndSearchText(robot, Config.playPng, Config.searchWallet, Config.searchWallet);
 
