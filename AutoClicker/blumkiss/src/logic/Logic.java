@@ -42,10 +42,9 @@ public class Logic {
 
         System.out.print("Tg username: ");
         Config.username = scanner.nextLine();
-        Thread.sleep(10000);
         Robot robot = new Robot();
         Runtime run = Runtime.getRuntime();
-        logic.runTelegramBot(run, robot);
+        while(!Config.findPlay) logic.runTelegramBot(run, robot);
         if (Config.findPlay) {
             logic.playGame(robot);
         } else {
