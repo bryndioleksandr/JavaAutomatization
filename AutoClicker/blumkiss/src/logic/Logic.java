@@ -214,7 +214,7 @@ public class Logic {
                     Config.findPlay = true;
                 }
                 else if(searchText.matches("Rewards")){
-                    robot.mouseMove(xPlay+x, yPlay+y + ((300*Config.width)/1920));
+                    robot.mouseMove(xPlay+x, yPlay+y + ((250*Config.width)/1920));
                     Thread.sleep(2000);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
@@ -334,8 +334,20 @@ public class Logic {
 //        Scalar lowerGreen = new Scalar(35, 150, 160, 0);
 //        Scalar upperGreen = new Scalar(70, 255, 255, 0);
 
-        Scalar lowerGreen = new Scalar(15, 15, 15, 0);
-        Scalar upperGreen = new Scalar(150, 165, 255, 0);
+//        Scalar lowerGreen = new Scalar(15, 15, 15, 0);
+//        Scalar upperGreen = new Scalar(150, 165, 255, 0);
+
+        // This is good but not clicking bombs
+//        Scalar lowerGreen = new Scalar(5, 150, 150);
+//        Scalar upperGreen = new Scalar(50, 255, 255);
+
+        //This is better now
+//        Scalar lowerGreen = new Scalar(5, 30, 150);
+//        Scalar upperGreen = new Scalar(50, 255, 255);
+
+        Scalar lowerGreen = new Scalar(0, 15, 128);
+        Scalar upperGreen = new Scalar(50, 255, 255);
+
 
         Mat mask = new Mat();
         Core.inRange(hsvImage, lowerGreen, upperGreen, mask);
@@ -349,7 +361,7 @@ public class Logic {
             int centerX = boundingRect.x + boundingRect.width / 2;
             int centerY = boundingRect.y + boundingRect.height / 2;
 
-            //if(boundingRect.width > 20 && boundingRect.height > 20) {
+            if(boundingRect.width > 10 && boundingRect.height > 10) {
                 System.out.println("Snowflake found at x, y: " + centerX + ", " + centerY);
                 robot.mouseMove(centerX + x, centerY + y);
                 robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
@@ -361,8 +373,8 @@ public class Logic {
                 Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                 starIndex++;
-                Thread.sleep(4);
-            //}
+                Thread.sleep(3);
+            }
 //            else{
 //                System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
 //            }
