@@ -30,6 +30,15 @@ public class Logic {
     static {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
+    static int webX = 717;
+    static int webY = 82;
+    static int webWidth = 488;
+    static int webHeight = 872;
+
+//    static int webX = 698;
+//    static int webY = 200;
+//    static int webWidth = 524;
+//    static int webHeight = 820;
 
     public static void main(String[] args) throws IOException, AWTException, InterruptedException {
         Logic logic = new Logic();
@@ -131,6 +140,8 @@ public class Logic {
 //        Thread.sleep(2500);
 
         captureAndSearchText(robot, Config.playPng, Config.searchWallet, Config.searchWallet);
+   //     captureAndSearchText(robot, Config.playPng, "game", "game");
+
 
     }
 
@@ -161,12 +172,12 @@ public class Logic {
 
     public void captureAndSearchText(Robot robot, String fileName, String searchText, String foundText) throws AWTException, IOException, InterruptedException {
         BufferedImage screenshot;
-        if(searchText.equals("Wallet")){
+        if(searchText.equals("Wallet") || searchText.equals("game")){
 
-            int xPlay = (717*Config.width)/1920;
-            int yPlay = (82*Config.height)/1080;
-            int widthPlay = (488*Config.width)/1920;
-            int heightPlay = (872*Config.height)/1080;
+            int xPlay = (webX*Config.width)/1920;
+            int yPlay = (webY*Config.height)/1080;
+            int widthPlay = (webWidth*Config.width)/1920;
+            int heightPlay = (webHeight*Config.height)/1080;
             screenshot = new Robot().createScreenCapture(
                     new java.awt.Rectangle(xPlay, yPlay , widthPlay, heightPlay)
             );
@@ -199,8 +210,8 @@ public class Logic {
         for (Word word : words) {
             if (word.getText().equalsIgnoreCase(searchText)) {
                 java.awt.Rectangle boundingBox = word.getBoundingBox();
-                int xPlay = (717*Config.width)/1920;
-                int yPlay = (82*Config.height)/1080;
+                int xPlay = (webX*Config.width)/1920;
+                int yPlay = (webY*Config.height)/1080;
 
                 int x = boundingBox.x;
                 int y = boundingBox.y;
@@ -208,6 +219,13 @@ public class Logic {
                 int heightBox = boundingBox.height;
                 if(searchText.matches("Wallet")){
                     robot.mouseMove(xPlay+x, yPlay+y - ((225*Config.width)/1920));
+                    Thread.sleep(2000);
+                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                    robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                    Config.findPlay = true;
+                }
+                else if(searchText.matches("game")){
+                    robot.mouseMove(xPlay+x + (300*Config.width)/1920, yPlay+y);
                     Thread.sleep(2000);
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
@@ -237,17 +255,17 @@ public class Logic {
     }
 
     public void playGame(Robot robot) throws IOException, InterruptedException, AWTException {
-        int xPlay = (717*Config.width)/1920;
-        int yPlay = (82*Config.height)/1080;
-        int widthPlay = (488*Config.width)/1920;
-        int heightPlay = (872*Config.height)/1080;
+        int xPlay = (webX*Config.width)/1920;
+        int yPlay = (webY*Config.height)/1080;
+        int widthPlay = (webWidth*Config.width)/1920;
+        int heightPlay = (webHeight*Config.height)/1080;
         int gameplayIndex = 0;
-        long gameDuration = 32 * 1000;
+        long gameDuration = 33 * 1000;
         long startTime = System.currentTimeMillis();
 
         robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
         robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-        Thread.sleep(2000);
+        Thread.sleep(200);
 
         while (System.currentTimeMillis() - startTime < gameDuration) {
             while (System.currentTimeMillis() - startTime < gameDuration/2) {
@@ -260,7 +278,7 @@ public class Logic {
                 ImageIO.write(screenshotGameplay, "png", outputfile);
 
                 detectObjects(robot, screenshotFilename, xPlay, yPlay);
-                Thread.sleep(200);
+                Thread.sleep(10);
             }
             while(System.currentTimeMillis() - startTime < gameDuration) {
                 BufferedImage screenshotGameplay = new Robot().createScreenCapture(
@@ -272,7 +290,7 @@ public class Logic {
                 ImageIO.write(screenshotGameplay, "png", outputfile);
 
                 detectObjects(robot, screenshotFilename, xPlay, yPlay);
-                Thread.sleep(200);
+                Thread.sleep(10);
             }
         }
 
@@ -293,10 +311,10 @@ public class Logic {
     }
 
     public boolean findAndClickPlayButton(Robot robot) throws IOException, InterruptedException, AWTException {
-        int xPlay = (717*Config.width)/1920;
-        int yPlay = (82*Config.height)/1080;
-        int widthPlay = (488*Config.width)/1920;
-        int heightPlay = (872*Config.height)/1080;
+        int xPlay = (webX*Config.width)/1920;
+        int yPlay = (webY*Config.height)/1080;
+        int widthPlay = (webWidth*Config.width)/1920;
+        int heightPlay = (webHeight*Config.height)/1080;
         BufferedImage screenshot = new Robot().createScreenCapture(
                 new java.awt.Rectangle(xPlay, yPlay , widthPlay, heightPlay)
         );
@@ -373,7 +391,7 @@ public class Logic {
                 Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                 starIndex++;
-                Thread.sleep(3);
+                Thread.sleep(2);
             }
 //            else{
 //                System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
