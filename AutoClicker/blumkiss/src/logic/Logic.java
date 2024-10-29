@@ -271,7 +271,7 @@ public class Logic {
                 File outputfile = new File(screenshotFilename);
                 ImageIO.write(screenshotGameplay, "png", outputfile);
 
-                detectObjectsSecondHalf(robot, screenshotFilename, xPlay, yPlay);
+                detectObjects(robot, screenshotFilename, xPlay, yPlay);
                 Thread.sleep(200);
             }
         }
@@ -331,8 +331,11 @@ public class Logic {
 
         Mat hsvImage = new Mat();
         Imgproc.cvtColor(image, hsvImage, Imgproc.COLOR_BGR2HSV);
-        Scalar lowerGreen = new Scalar(35, 150, 160, 0);
-        Scalar upperGreen = new Scalar(70, 255, 255, 0);
+//        Scalar lowerGreen = new Scalar(35, 150, 160, 0);
+//        Scalar upperGreen = new Scalar(70, 255, 255, 0);
+
+        Scalar lowerGreen = new Scalar(15, 15, 15, 0);
+        Scalar upperGreen = new Scalar(150, 165, 255, 0);
 
         Mat mask = new Mat();
         Core.inRange(hsvImage, lowerGreen, upperGreen, mask);
@@ -346,7 +349,7 @@ public class Logic {
             int centerX = boundingRect.x + boundingRect.width / 2;
             int centerY = boundingRect.y + boundingRect.height / 2;
 
-            if(boundingRect.width > 20 && boundingRect.height > 20) {
+            //if(boundingRect.width > 20 && boundingRect.height > 20) {
                 System.out.println("Snowflake found at x, y: " + centerX + ", " + centerY);
                 robot.mouseMove(centerX + x, centerY + y);
                 robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
@@ -359,10 +362,10 @@ public class Logic {
 
                 starIndex++;
                 Thread.sleep(4);
-            }
-            else{
-                System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
-            }
+            //}
+//            else{
+//                System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
+//            }
         }
 
         mask.release();
