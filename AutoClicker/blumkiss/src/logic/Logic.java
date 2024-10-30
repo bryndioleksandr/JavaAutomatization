@@ -265,7 +265,7 @@ public class Logic {
 
         robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
         robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-        Thread.sleep(200);
+        Thread.sleep(2000);
 
         while (System.currentTimeMillis() - startTime < gameDuration) {
             while (System.currentTimeMillis() - startTime < gameDuration/2) {
@@ -278,7 +278,7 @@ public class Logic {
                 ImageIO.write(screenshotGameplay, "png", outputfile);
 
                 detectObjects(robot, screenshotFilename, xPlay, yPlay);
-                Thread.sleep(10);
+                Thread.sleep(100);
             }
             while(System.currentTimeMillis() - startTime < gameDuration) {
                 BufferedImage screenshotGameplay = new Robot().createScreenCapture(
@@ -290,7 +290,7 @@ public class Logic {
                 ImageIO.write(screenshotGameplay, "png", outputfile);
 
                 detectObjects(robot, screenshotFilename, xPlay, yPlay);
-                Thread.sleep(10);
+                Thread.sleep(100);
             }
         }
 
@@ -391,7 +391,7 @@ public class Logic {
                 Imgcodecs.imwrite(maskFilename, singleStarMask);
 
                 starIndex++;
-                Thread.sleep(2);
+                Thread.sleep(4);
             }
 //            else{
 //                System.out.println("Object is too small, skipping it" + boundingRect.width + " - width; " + boundingRect.height + " - height.");
