@@ -237,7 +237,7 @@ public class Logic {
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
                     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
                     Config.findPlay = true;
-                }
+                }6
 
                 else {
                     System.out.println("Found '" + foundText + "' at: " + x + ", " + y);
